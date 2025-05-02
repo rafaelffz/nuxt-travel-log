@@ -9,11 +9,12 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint:fix": "eslint --fix",
     "prepare": "husky"
   },
   "dependencies": {
     "@nuxt/icon": "1.12.0",
+    "@nuxtjs/color-mode": "3.5.2",
     "@tailwindcss/vite": "^4.1.5",
     "nuxt": "^3.17.1",
     "tailwindcss": "^4.1.5",
@@ -32,6 +33,9 @@
     "prettier": "3.5.3"
   },
   "lint-staged": {
-    "*": "pnpm lint"
+    "*.{js,ts,vue,json}": [
+      "prettier --write",
+      "pnpm lint:fix --"
+    ]
   }
 }
