@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1746384678988,
-      "tag": "0000_motionless_korvac",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1746496441576,
-      "tag": "0001_black_tusk",
+      "when": 1747281058989,
+      "tag": "0000_needy_goblin_queen",
       "breakpoints": true
     }
   ]
