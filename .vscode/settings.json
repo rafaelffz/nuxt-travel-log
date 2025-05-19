@@ -46,5 +46,7 @@
     "scss",
     "pcss",
     "postcss"
-  ]
+  ],
+
+  "tailwindCSS.experimental.configFile": "assets/css/main.css"
 }
