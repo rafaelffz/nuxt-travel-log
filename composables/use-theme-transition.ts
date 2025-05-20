@@ -29,7 +29,7 @@ export function useThemeTransition() {
     await transition.ready;
 
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    const duration = isMobile ? 400 : 600;
+    const duration = isMobile ? 400 : 500;
 
     document.documentElement.animate(
       {
