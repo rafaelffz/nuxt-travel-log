@@ -25,9 +25,8 @@ const route = useRoute();
       <Transition name="grow-x">
         <span
           v-show="showLabel"
-          class="whitespace-nowrap origin-left" :class="[
-            showLabel ? 'w-auto opacity-100' : 'w-0 opacity-0',
-          ]"
+          class="whitespace-nowrap origin-left"
+          :class="[showLabel ? 'w-auto opacity-100' : 'w-0 opacity-0']"
         >{{ props.label }}</span>
       </Transition>
     </NuxtLink>

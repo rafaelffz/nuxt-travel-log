@@ -1,10 +1,5 @@
 <script setup lang="ts">
 const { isDark, toggleTheme } = useThemeTransition();
-const mounted = ref(false);
-
-onMounted(() => {
-  mounted.value = true;
-});
 
 function handleThemeToggle(event: MouseEvent) {
   toggleTheme(event);

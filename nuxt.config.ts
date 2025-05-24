@@ -6,7 +6,15 @@ import "./lib/env";
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
-  modules: ["@nuxt/eslint", "@nuxt/icon", "@nuxtjs/color-mode", "@pinia/nuxt"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/icon",
+    "@nuxtjs/color-mode",
+    "@pinia/nuxt",
+    "@vee-validate/nuxt",
+    "motion-v/nuxt",
+    "nuxt-csurf",
+  ],
   css: ["~/assets/css/main.css"],
   eslint: {
     config: {
@@ -18,5 +26,10 @@ export default defineNuxtConfig({
   },
   colorMode: {
     dataValue: "theme",
+  },
+  app: {
+    head: {
+      title: "MyTravlog",
+    },
   },
 });

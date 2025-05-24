@@ -1,7 +1,14 @@
 export function useThemeTransition() {
   const colorMode = useColorMode();
 
-  const isDark = computed(() => colorMode.value === "dark");
+  const isDark = computed({
+    get() {
+      return colorMode.value === "dark";
+    },
+    set(value) {
+      colorMode.preference = value ? "light" : "dark";
+    },
+  });
 
   const toggleTheme = async (event?: MouseEvent) => {
     if (!import.meta.client || !(document as any).startViewTransition) {
@@ -28,19 +35,15 @@ export function useThemeTransition() {
 
     await transition.ready;
 
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    const duration = isMobile ? 400 : 500;
-
     document.documentElement.animate(
       {
         clipPath: [
           `circle(0px at ${x}px ${y}px)`,
           `circle(${endRadius}px at ${x}px ${y}px)`,
         ],
-        filter: ["blur(5px)", "blur(0px)"],
       },
       {
-        duration,
+        duration: 450,
         easing: "cubic-bezier(.76,.32,.29,.99)",
         pseudoElement: "::view-transition-new(root)",
       },
