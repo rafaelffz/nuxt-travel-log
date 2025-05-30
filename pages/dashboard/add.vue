@@ -1,58 +1,56 @@
 <script setup lang="ts">
-import type { FetchError } from "ofetch";
+import type { FetchError } from 'ofetch'
 
-import { toTypedSchema } from "@vee-validate/zod";
-import { motion } from "motion-v";
+import { toTypedSchema } from '@vee-validate/zod'
+import { motion } from 'motion-v'
 
-import { InsertLocation } from "~/lib/db/schema";
+import { InsertLocation } from '~/lib/db/schema'
 
-const { $csrfFetch } = useNuxtApp();
+const { $csrfFetch } = useNuxtApp()
 
 const { handleSubmit, errors, meta, setErrors } = useForm({
   validationSchema: toTypedSchema(InsertLocation),
-});
+})
 
-const router = useRouter();
-const loading = ref(false);
-const submitted = ref(false);
-const submitError = ref("");
+const router = useRouter()
+const loading = ref(false)
+const submitted = ref(false)
+const submitError = ref('')
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    submitError.value = "";
-    loading.value = true;
+    submitError.value = ''
+    loading.value = true
 
-    await $csrfFetch("/api/locations", {
-      method: "POST",
+    await $csrfFetch('/api/locations', {
+      method: 'POST',
       body: values,
-    });
+    })
 
-    submitted.value = true;
-    navigateTo("/dashboard");
+    submitted.value = true
+    navigateTo('/dashboard')
   }
   catch (e) {
-    const error = e as FetchError;
+    const error = e as FetchError
     if (error.data?.data)
-      setErrors(error.data?.data);
-    submitError.value = error.statusMessage || "An unknown error occurred";
+      setErrors(error.data?.data)
+    submitError.value = error.data?.statusMessage || error.statusMessage || 'An unknown error occurred'
   }
   finally {
-    loading.value = false;
+    loading.value = false
   }
-});
+})
 
 onBeforeRouteLeave(() => {
   if (!submitted.value && meta.value.dirty) {
     // eslint-disable-next-line no-alert
-    const confirm = window.confirm(
-      "Are you sure you want to leave? All unsaved changes will be lost.",
-    );
+    const confirm = window.confirm('Are you sure you want to leave? All unsaved changes will be lost.')
     if (!confirm) {
-      return false;
+      return false
     }
   }
-  return true;
-});
+  return true
+})
 </script>
 
 <template>
@@ -62,9 +60,8 @@ onBeforeRouteLeave(() => {
         Add Location
       </h1>
       <p class="text-sm">
-        A location is a place you have traveled or will travel to. It can be a
-        city, country, state or point of interest. You can add specific times
-        you visited this location after adding it.
+        A location is a place you have traveled or will travel to. It can be a city, country, state or point of
+        interest. You can add specific times you visited this location after adding it.
       </p>
     </div>
 
@@ -137,10 +134,7 @@ onBeforeRouteLeave(() => {
 
         <button :disabled="loading" type="submit" class="btn btn-primary">
           Add
-          <span
-            v-if="loading"
-            class="loading loading-spinner loading-sm"
-          />
+          <span v-if="loading" class="loading loading-spinner loading-sm" />
           <Icon v-else name="tabler:map-pin-plus" size="22" />
         </button>
       </div>

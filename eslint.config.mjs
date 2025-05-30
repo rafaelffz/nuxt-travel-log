@@ -1,6 +1,5 @@
 // @ts-check
 import antfu from "@antfu/eslint-config";
-
 import withNuxt from "./.nuxt/eslint.config.mjs";
 
 export default withNuxt(
@@ -9,12 +8,6 @@ export default withNuxt(
       type: "app",
       vue: true,
       typescript: true,
-      formatters: true,
-      stylistic: {
-        indent: 2,
-        semi: true,
-        quotes: "double",
-      },
       ignores: [".pnpm-store/", "**/migrations/*"],
     },
     {
