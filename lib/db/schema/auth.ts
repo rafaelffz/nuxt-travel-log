@@ -18,7 +18,7 @@ export const session = sqliteTable("session", {
   updatedAt: integer().notNull(),
   ipAddress: text(),
   userAgent: text(),
-  userId: text()
+  userId: integer()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
@@ -27,7 +27,7 @@ export const account = sqliteTable("account", {
   id: integer().primaryKey({ autoIncrement: true }),
   accountId: text().notNull(),
   providerId: text().notNull(),
-  userId: text()
+  userId: integer()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   accessToken: text(),
