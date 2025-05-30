@@ -1,12 +1,12 @@
-import type { z, ZodNumber, ZodString } from 'zod'
+import type { z, ZodNumber, ZodString } from "zod";
 
-import { int, real, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core'
-import { createInsertSchema } from 'drizzle-zod'
+import { int, real, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
+import { createInsertSchema } from "drizzle-zod";
 
-import { user } from './auth'
+import { user } from "./auth";
 
 export const location = sqliteTable(
-  'location',
+  "location",
   {
     id: int().primaryKey({ autoIncrement: true }),
     name: text().notNull(),
@@ -26,7 +26,7 @@ export const location = sqliteTable(
       .$onUpdate(() => Date.now()),
   },
   t => [unique().on(t.name, t.userId)],
-)
+);
 
 export const InsertLocation = createInsertSchema(location, {
   name: (field: ZodString) => field.min(1).max(100),
@@ -39,6 +39,6 @@ export const InsertLocation = createInsertSchema(location, {
   userId: true,
   createdAt: true,
   updatedAt: true,
-})
+});
 
-export type InsertLocation = z.infer<typeof InsertLocation>
+export type InsertLocation = z.infer<typeof InsertLocation>;
