@@ -6,6 +6,10 @@ import { motion } from "motion-v";
 
 import { InsertLocation } from "~/lib/db/schema";
 
+useHead({
+  title: "MyTravlo | Add Location",
+});
+
 const { $csrfFetch } = useNuxtApp();
 
 const { handleSubmit, errors, meta, setErrors } = useForm({
