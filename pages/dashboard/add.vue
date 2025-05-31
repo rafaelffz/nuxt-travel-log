@@ -31,6 +31,8 @@ const onSubmit = handleSubmit(async (values) => {
       body: values,
     });
 
+    await refreshNuxtData("locations");
+
     submitted.value = true;
     navigateTo("/dashboard");
   }
@@ -58,8 +60,8 @@ onBeforeRouteLeave(() => {
 </script>
 
 <template>
-  <div class="container max-w-md mx-auto">
-    <div class="my-4">
+  <div class="container max-w-md mx-auto p-6">
+    <div>
       <h1 class="text-lg">
         Add Location
       </h1>
