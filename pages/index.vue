@@ -1,4 +1,8 @@
 <script setup lang="ts">
+useHead({
+  title: "MyTravlo",
+});
+
 const authStore = useAuthStore();
 </script>
 
@@ -10,9 +14,8 @@ const authStore = useAuthStore();
           Travel Log
         </h1>
         <p class="py-6">
-          Keep track of your travels and adventures with this simple travel log
-          app. Add locations, photos, and notes to create a digital journal of
-          your journeys.
+          Keep track of your travels and adventures with this simple travel log app. Add locations, photos, and notes to
+          create a digital journal of your journeys.
         </p>
         <AuthButton v-if="!authStore.user" />
         <NuxtLink v-else to="/dashboard" class="btn btn-primary">
