@@ -1,6 +1,6 @@
 <script setup lang="ts">
 useHead({
-  title: "MyTravlog | Dashboard",
+  title: "MyTravlo | Dashboard",
 });
 
 const isSidebarOpen = ref(true);
