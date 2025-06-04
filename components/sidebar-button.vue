@@ -10,16 +10,13 @@ const route = useRoute();
 </script>
 
 <template>
-  <div
-    class="tooltip tooltip-right"
-    :data-tip="showLabel ? undefined : props.label"
-  >
+  <div class="tooltip tooltip-right" :data-tip="showLabel ? undefined : props.label">
     <NuxtLink
       :to="props.href"
       :class="{
         'bg-base-300': route.path === props.href,
       }"
-      class="flex items-center gap-2 p-2 hover:bg-base-300 rounded-md cursor-pointer font-medium"
+      class="flex items-center gap-2 p-2 hover:bg-base-300 rounded-lg cursor-pointer font-medium transition-all duration-100 ease-out"
     >
       <Icon :name="props.icon" size="24" class="mx-1 min-h-6 min-w-6" />
       <Transition name="grow-x">
