@@ -3,15 +3,24 @@ useHead({
   title: "MyTravlo | Dashboard",
 });
 
+const route = useRoute();
+const sidebarStore = useSidebarStore();
+const locationsStore = useLocationsStore();
+const { loading } = storeToRefs(sidebarStore);
+const { showLoading } = useDelayedLoading(loading);
+
 const isSidebarOpen = ref(true);
 
-function toggleSidebaer() {
+function toggleSidebar() {
   isSidebarOpen.value = !isSidebarOpen.value;
   localStorage.setItem("isSidebarOpen", isSidebarOpen.value.toString());
 }
 
 onMounted(() => {
   isSidebarOpen.value = localStorage.getItem("isSidebarOpen") === "true";
+  if (route.path !== "/dashboard") {
+    locationsStore.refresh();
+  }
 });
 </script>
 
@@ -27,7 +36,7 @@ onMounted(() => {
           'justify-center': !isSidebarOpen,
           'justify-end': isSidebarOpen,
         }"
-        @click="toggleSidebaer"
+        @click="toggleSidebar"
       >
         <Icon v-show="isSidebarOpen" name="tabler:chevrons-left" size="32" />
         <Icon v-show="!isSidebarOpen" name="tabler:chevrons-right" size="32" />
@@ -46,11 +55,28 @@ onMounted(() => {
           icon="tabler:map-plus"
           href="/dashboard/add"
         />
+
+        <div v-show="sidebarStore.sidebarItems.length > 0 || showLoading" class="divider m-0" />
+
+        <div v-show="!showLoading" class="flex flex-col gap-1">
+          <SidebarButton
+            v-for="item in sidebarStore.sidebarItems"
+            :key="item.id"
+            :show-label="isSidebarOpen"
+            :label="item.label"
+            :icon="item.icon"
+            :href="item.href"
+          />
+        </div>
+
+        <div v-show="showLoading" class="flex flex-col gap-2">
+          <div v-for="(_, index) in 3" :key="index" class="skeleton h-8 w-full animate-pulse" />
+        </div>
       </div>
 
       <div class="divider m-0" />
 
-      <div>
+      <div class="flex flex-col">
         <SidebarButton
           :show-label="isSidebarOpen"
           label="Sign Out"
