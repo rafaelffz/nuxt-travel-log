@@ -19,7 +19,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
 
     const data = result.error.issues.reduce(
       (errors, issue) => {
-        errors[issue.path.join("")] = issue.message;
+        errors[issue.path.join(".")] = issue.message;
         return errors;
       },
       {} as Record<string, string>,

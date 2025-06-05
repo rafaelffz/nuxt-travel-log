@@ -14,6 +14,8 @@ export default defineNuxtConfig({
     "@vee-validate/nuxt",
     "motion-v/nuxt",
     "nuxt-csurf",
+    "nuxt-maplibre",
+    "@vueuse/nuxt",
   ],
   css: ["~/assets/css/main.css"],
   eslint: {
@@ -23,6 +25,9 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: ["maplibre-gl"],
+    },
   },
   colorMode: {
     dataValue: "theme",
