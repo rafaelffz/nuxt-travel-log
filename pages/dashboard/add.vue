@@ -40,7 +40,8 @@ const onSubmit = handleSubmit(async (values) => {
     const error = e as FetchError;
     if (error.data?.data)
       setErrors(error.data?.data);
-    submitError.value = error.data?.statusMessage || error.statusMessage || "An unknown error occurred";
+    submitError.value
+      = error.data?.statusMessage || error.statusMessage || "An unknown error occurred";
   }
   finally {
     loading.value = false;
@@ -50,7 +51,9 @@ const onSubmit = handleSubmit(async (values) => {
 onBeforeRouteLeave(() => {
   if (!submitted.value && meta.value.dirty) {
     // eslint-disable-next-line no-alert
-    const confirm = window.confirm("Are you sure you want to leave? All unsaved changes will be lost.");
+    const confirm = window.confirm(
+      "Are you sure you want to leave? All unsaved changes will be lost.",
+    );
     if (!confirm) {
       return false;
     }
@@ -66,8 +69,8 @@ onBeforeRouteLeave(() => {
         Add Location
       </h1>
       <p class="text-sm">
-        A location is a place you have traveled or will travel to. It can be a city, country, state or point of
-        interest. You can add specific times you visited this location after adding it.
+        A location is a place you have traveled or will travel to. It can be a city, country, state
+        or point of interest. You can add specific times you visited this location after adding it.
       </p>
     </div>
 
