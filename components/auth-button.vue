@@ -3,10 +3,7 @@ const authStore = useAuthStore();
 </script>
 
 <template>
-  <div
-    v-if="!authStore.loading && authStore.user"
-    class="dropdown dropdown-end"
-  >
+  <div v-if="!authStore.loading && authStore.user" class="dropdown dropdown-end">
     <div tabindex="0" role="button" class="btn m-1 gap-3">
       <div v-if="authStore.user.image" class="avatar">
         <div class="w-8 rounded-full">
@@ -15,10 +12,7 @@ const authStore = useAuthStore();
       </div>
       {{ authStore.user.name }}
     </div>
-    <ul
-      tabindex="0"
-      class="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 shadow-sm"
-    >
+    <ul tabindex="0" class="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 shadow-sm">
       <li class="text-base-content">
         <NuxtLink to="/sign-out">
           <Icon name="tabler:logout-2" size="24" />

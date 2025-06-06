@@ -21,11 +21,7 @@ const { locations, pending } = storeToRefs(locationsStore);
       v-else-if="!pending && locations && locations.length > 0"
       class="flex flex-nowrap mt-4 gap-2 overflow-auto"
     >
-      <div
-        v-for="location in locations"
-        :key="location.id"
-        class="card bg-base-300 w-72 min-h-28"
-      >
+      <div v-for="location in locations" :key="location.id" class="card bg-base-300 w-72 min-h-28">
         <div class="card-body">
           <h2 class="text-xl font-medium">
             {{ location.name }}

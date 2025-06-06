@@ -19,11 +19,7 @@ onMounted(() => {
 
 <template>
   <div class="flex-1">
-    <MglMap
-      :map-style="style"
-      :center="center"
-      :zoom="zoom"
-    >
+    <MglMap :map-style="style" :center="center" :zoom="zoom">
       <MglFullscreenControl />
       <MglNavigationControl />
       <MglMarker
@@ -33,11 +29,7 @@ onMounted(() => {
       >
         <template #marker>
           <div class="tooltip tooltip-top" :data-tip="point.label">
-            <Icon
-              name="tabler:map-pin-filled"
-              size="32"
-              class="text-secondary"
-            />
+            <Icon name="tabler:map-pin-filled" size="32" class="text-secondary" />
           </div>
         </template>
       </MglMarker>
