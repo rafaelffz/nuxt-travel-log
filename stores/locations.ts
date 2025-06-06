@@ -6,8 +6,9 @@ export const useLocationsStore = defineStore("locations", () => {
   });
 
   const sidebarStore = useSidebarStore();
+  const mapStore = useMapStore();
 
-  watchEffect(() => {
+  effect(() => {
     if (data.value) {
       sidebarStore.loading = false;
       sidebarStore.sidebarItems = data.value.map(location => ({
@@ -16,6 +17,15 @@ export const useLocationsStore = defineStore("locations", () => {
         icon: "tabler:map-pin",
         href: "*",
       }));
+
+      mapStore.mapPoints = data.value.map((location) => {
+        return {
+          id: location.id,
+          label: location.name,
+          lat: location.lat,
+          long: location.long,
+        };
+      });
     }
 
     sidebarStore.loading = pending.value;
