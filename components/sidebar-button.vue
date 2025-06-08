@@ -4,6 +4,7 @@ const props = defineProps<{
   icon: string;
   href: string;
   showLabel?: boolean;
+  iconColor?: "text-accent" | "text-primary" | "text-secondary";
 }>();
 
 const route = useRoute();
@@ -18,7 +19,12 @@ const route = useRoute();
       }"
       class="flex items-center gap-2 p-2 hover:bg-base-300 rounded-lg cursor-pointer font-medium transition-all duration-100 ease-out"
     >
-      <Icon :name="props.icon" size="24" class="mx-1 min-h-6 min-w-6" />
+      <Icon
+        :name="props.icon"
+        size="24"
+        class="mx-1 min-h-6 min-w-6"
+        :class="props.iconColor"
+      />
       <Transition name="grow-x">
         <span
           v-show="showLabel"
