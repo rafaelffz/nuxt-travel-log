@@ -5,6 +5,7 @@ useHead({
 
 const route = useRoute();
 const sidebarStore = useSidebarStore();
+const mapStore = useMapStore();
 const locationsStore = useLocationsStore();
 const { loading } = storeToRefs(sidebarStore);
 const { showLoading } = useDelayedLoading(loading);
@@ -27,7 +28,7 @@ onMounted(() => {
 <template>
   <div class="flex-1 flex">
     <div
-      class="bg-base-100 p-2 flex flex-col space-y-2 border-r border-r-base-300 transition-all duration-300 ease-out"
+      class="bg-base-100 p-2 flex flex-col space-y-2 border-r border-r-base-300 transition-all duration-300 ease-out shrink-0"
       :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }"
     >
       <div
@@ -56,7 +57,10 @@ onMounted(() => {
           href="/dashboard/add"
         />
 
-        <div v-show="sidebarStore.sidebarItems.length > 0 || showLoading" class="divider m-0" />
+        <div
+          v-show="sidebarStore.sidebarItems.length > 0 || showLoading"
+          class="divider m-0"
+        />
 
         <div v-show="!showLoading" class="flex flex-col gap-1">
           <SidebarButton
@@ -66,11 +70,20 @@ onMounted(() => {
             :label="item.label"
             :icon="item.icon"
             :href="item.href"
+            :icon-color="
+              mapStore.selectedPoint === item.location ? 'text-accent' : undefined
+            "
+            @mouseenter="mapStore.selectedPoint = item.location ?? null"
+            @mouseleave="mapStore.selectedPoint = null"
           />
         </div>
 
         <div v-show="showLoading" class="flex flex-col gap-2">
-          <div v-for="(_, index) in 3" :key="index" class="skeleton h-8 w-full animate-pulse" />
+          <div
+            v-for="(_, index) in 3"
+            :key="index"
+            class="skeleton h-8 w-full animate-pulse"
+          />
         </div>
       </div>
 
@@ -85,9 +98,11 @@ onMounted(() => {
         />
       </div>
     </div>
-    <div class="flex-1 flex flex-col">
-      <NuxtPage />
-      <AppMap />
+    <div class="flex-1 overflow-auto">
+      <div class="flex flex-col size-full">
+        <NuxtPage />
+        <AppMap />
+      </div>
     </div>
   </div>
 </template>
