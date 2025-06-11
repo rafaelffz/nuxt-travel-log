@@ -2,6 +2,8 @@
 const locationsStore = useLocationsStore();
 const mapStore = useMapStore();
 const { locations, pending } = storeToRefs(locationsStore);
+
+mapStore.adjustMapBounds();
 </script>
 
 <template>

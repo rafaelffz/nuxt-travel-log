@@ -14,10 +14,7 @@ const props = defineProps<{
       {{ props.label }}
     </legend>
     <Field
-      :as="
-        ((props.type === 'number' || props.type === 'text') && 'input')
-          || props.type
-      "
+      :as="((props.type === 'number' || props.type === 'text') && 'input') || props.type"
       :name="props.name"
       :type="props.type || 'text'"
       :disabled="props.disabled"
