@@ -4,6 +4,7 @@ import type { FetchError } from "ofetch";
 import { toTypedSchema } from "@vee-validate/zod";
 import { motion } from "motion-v";
 
+import { CENTER_MAP_COORDINATES } from "~/lib/constants";
 import { InsertLocation } from "~/lib/db/schema";
 
 useHead({
@@ -12,10 +13,18 @@ useHead({
 
 const { $csrfFetch } = useNuxtApp();
 
-const { handleSubmit, errors, meta, setErrors } = useForm({
-  validationSchema: toTypedSchema(InsertLocation),
-});
+const { handleSubmit, errors, meta, setErrors, setFieldValue, controlledValues }
+  = useForm({
+    validationSchema: toTypedSchema(InsertLocation),
+    initialValues: {
+      name: "",
+      description: "",
+      long: (CENTER_MAP_COORDINATES as [number, number])[0],
+      lat: (CENTER_MAP_COORDINATES as [number, number])[1],
+    },
+  });
 
+const mapStore = useMapStore();
 const router = useRouter();
 const loading = ref(false);
 const submitted = ref(false);
@@ -48,6 +57,29 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
+function formatCoords(coords?: number) {
+  if (!coords)
+    return 0;
+  return coords.toFixed(5);
+}
+
+watchEffect(() => {
+  if (mapStore.addedPoint) {
+    setFieldValue("long", mapStore.addedPoint.long);
+    setFieldValue("lat", mapStore.addedPoint.lat);
+  }
+});
+
+onMounted(() => {
+  mapStore.addedPoint = {
+    id: 1,
+    name: "Added Point",
+    description: "",
+    lat: (CENTER_MAP_COORDINATES as [number, number])[1],
+    long: (CENTER_MAP_COORDINATES as [number, number])[0],
+  };
+});
+
 onBeforeRouteLeave(() => {
   if (!submitted.value && meta.value.dirty) {
     // eslint-disable-next-line no-alert
@@ -58,19 +90,21 @@ onBeforeRouteLeave(() => {
       return false;
     }
   }
+  mapStore.addedPoint = null;
   return true;
 });
 </script>
 
 <template>
-  <div class="container max-w-md mx-auto p-6">
+  <div class="container max-w-md m-6">
     <div>
       <h1 class="text-lg">
         Add Location
       </h1>
       <p class="text-sm">
-        A location is a place you have traveled or will travel to. It can be a city, country, state
-        or point of interest. You can add specific times you visited this location after adding it.
+        A location is a place you have traveled or will travel to. It can be a city,
+        country, state or point of interest. You can add specific times you visited this
+        location after adding it.
       </p>
     </div>
 
@@ -114,21 +148,16 @@ onBeforeRouteLeave(() => {
         :disabled="loading"
       />
 
-      <AppFormField
-        name="lat"
-        label="Latitude"
-        type="number"
-        :error="errors.lat"
-        :disabled="loading"
-      />
+      <div class="flex items-center font-medium text-sm">
+        <span>Drag the</span>
+        <Icon name="tabler:map-pin-filled" class="text-warning mx-1" />
+        <span>to your desired location or double click on the map</span>
+      </div>
 
-      <AppFormField
-        name="long"
-        label="Longitude"
-        type="number"
-        :error="errors.long"
-        :disabled="loading"
-      />
+      <p class="text-xs text-gray-400">
+        Current Location: {{ formatCoords(controlledValues.lat) }},
+        {{ formatCoords(controlledValues.long) }}
+      </p>
 
       <div class="flex justify-end gap-4 mt-4">
         <button

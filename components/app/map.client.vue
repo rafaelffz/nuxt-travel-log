@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { LngLatLike } from "maplibre-gl";
+import type { MglEvent } from "@indoorequal/vue-maplibre-gl";
+import type { LngLat, LngLatLike } from "maplibre-gl";
 
 import { CENTER_MAP_COORDINATES } from "~/lib/constants";
 
@@ -14,6 +15,21 @@ const style = computed(() =>
 const center = ref<LngLatLike>(CENTER_MAP_COORDINATES);
 const zoom = 3;
 
+function updateAddedPoint(location: LngLat) {
+  if (mapStore.addedPoint) {
+    mapStore.addedPoint.lat = location.lat;
+    mapStore.addedPoint.long = location.lng;
+  }
+}
+
+function onDoubleClick(event: MglEvent<"dblclick">) {
+  console.log(event);
+  if (mapStore.addedPoint) {
+    mapStore.addedPoint.lat = event.event.lngLat.lat;
+    mapStore.addedPoint.long = event.event.lngLat.lng;
+  }
+}
+
 onMounted(() => {
   mapStore.init();
 });
@@ -21,9 +37,30 @@ onMounted(() => {
 
 <template>
   <div class="flex-1">
-    <MglMap :map-style="style" :center="center" :zoom="zoom">
+    <MglMap
+      :map-style="style"
+      :center="center"
+      :zoom="zoom"
+      @map:dblclick="onDoubleClick"
+    >
       <MglFullscreenControl />
       <MglNavigationControl />
+      <MglMarker
+        v-if="mapStore.addedPoint"
+        draggable
+        :coordinates="[mapStore.addedPoint.long, mapStore.addedPoint.lat]"
+        @update:coordinates="updateAddedPoint"
+      >
+        <template #marker>
+          <div
+            class="tooltip tooltip-top tooltip-open cursor-pointer"
+            data-tip="Drag to your desired location"
+          >
+            <Icon name="tabler:map-pin-filled" size="32" class="text-warning" />
+          </div>
+        </template>
+      </MglMarker>
+
       <MglMarker
         v-for="point in mapStore.mapPoints"
         :key="point.id"
@@ -36,8 +73,8 @@ onMounted(() => {
             :class="{
               'tooltip-open': mapStore.selectedPoint === point,
             }"
-            @mouseenter="mapStore.selectedPointWithoutFlyTo(point)"
-            @mouseleave="mapStore.selectedPointWithoutFlyTo(null)"
+            @mouseenter="mapStore.selectedPoint = point"
+            @mouseleave="mapStore.selectedPoint = null"
           >
             <Icon
               name="tabler:map-pin-filled"
@@ -46,14 +83,6 @@ onMounted(() => {
             />
           </div>
         </template>
-        <MglPopup>
-          <h3 class="text-xl text-base-content">
-            {{ point.name }}
-          </h3>
-          <p v-if="point.description" class="text-base-content">
-            {{ point.description }}
-          </p>
-        </MglPopup>
       </MglMarker>
     </MglMap>
   </div>

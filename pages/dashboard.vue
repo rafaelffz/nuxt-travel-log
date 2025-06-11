@@ -21,6 +21,7 @@ onMounted(() => {
   isSidebarOpen.value = localStorage.getItem("isSidebarOpen") === "true";
   if (route.path !== "/dashboard") {
     locationsStore.refresh();
+    console.log("caiu aqui");
   }
 });
 </script>
@@ -28,7 +29,7 @@ onMounted(() => {
 <template>
   <div class="flex-1 flex">
     <div
-      class="bg-base-100 p-2 flex flex-col space-y-2 border-r border-r-base-300 transition-all duration-300 ease-out shrink-0"
+      class="bg-base-100 p-2 flex flex-col space-y-2 transition-all duration-300 ease-out shrink-0"
       :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }"
     >
       <div
@@ -98,8 +99,11 @@ onMounted(() => {
         />
       </div>
     </div>
-    <div class="flex-1 overflow-auto">
-      <div class="flex flex-col size-full">
+    <div class="flex-1 overflow-auto bg-base-200">
+      <div
+        class="flex size-full"
+        :class="{ 'flex-col': route.path !== '/dashboard/add' }"
+      >
         <NuxtPage />
         <AppMap />
       </div>
