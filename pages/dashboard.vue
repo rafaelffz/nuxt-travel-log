@@ -21,7 +21,6 @@ onMounted(() => {
   isSidebarOpen.value = localStorage.getItem("isSidebarOpen") === "true";
   if (route.path !== "/dashboard") {
     locationsStore.refresh();
-    console.log("caiu aqui");
   }
 });
 </script>
@@ -101,7 +100,7 @@ onMounted(() => {
     </div>
     <div class="flex-1 overflow-auto bg-base-200">
       <div
-        class="flex size-full"
+        class="flex size-full max-h-full"
         :class="{ 'flex-col': route.path !== '/dashboard/add' }"
       >
         <NuxtPage />
