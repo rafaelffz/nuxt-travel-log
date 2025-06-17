@@ -4,8 +4,11 @@ import type { FetchError } from "ofetch";
 import { toTypedSchema } from "@vee-validate/zod";
 import { motion } from "motion-v";
 
+import type { NominatimResult } from "~/lib/types";
+
 import { CENTER_MAP_COORDINATES } from "~/lib/constants";
 import { InsertLocation } from "~/lib/db/schema";
+import { getFetchErrorMessage } from "~/utils/get-fetch-error-message";
 
 useHead({
   title: "MyTravlo | Add Location",
@@ -49,8 +52,7 @@ const onSubmit = handleSubmit(async (values) => {
     const error = e as FetchError;
     if (error.data?.data)
       setErrors(error.data?.data);
-    submitError.value
-      = error.data?.statusMessage || error.statusMessage || "An unknown error occurred";
+    submitError.value = getFetchErrorMessage(error);
   }
   finally {
     loading.value = false;
@@ -61,6 +63,19 @@ function formatCoords(coords?: number) {
   if (!coords)
     return 0;
   return coords.toFixed(5);
+}
+
+function searchResultSelected(result: NominatimResult) {
+  setFieldValue("name", result.name);
+
+  mapStore.addedPoint = {
+    id: 1,
+    name: "Added Point",
+    description: "",
+    lat: Number(result.lat),
+    long: Number(result.lon),
+    centerMap: true,
+  };
 }
 
 watchEffect(() => {
@@ -96,7 +111,7 @@ onBeforeRouteLeave(() => {
 </script>
 
 <template>
-  <div class="container max-w-md m-6">
+  <div class="container max-w-md p-4 m-2">
     <div>
       <h1 class="text-lg">
         Add Location
@@ -148,16 +163,24 @@ onBeforeRouteLeave(() => {
         :disabled="loading"
       />
 
-      <div class="flex items-center font-medium text-sm">
-        <span>Drag the</span>
-        <Icon name="tabler:map-pin-filled" class="text-warning mx-1" />
-        <span>to your desired location or double click on the map</span>
-      </div>
-
       <p class="text-xs text-gray-400">
         Current Location: {{ formatCoords(controlledValues.lat) }},
         {{ formatCoords(controlledValues.long) }}
       </p>
+
+      <div class="text-sm">
+        <p class="font-medium mt-2 mb-1">
+          Here are a few ways to set a location:
+        </p>
+        <ul class="list-disc list-inside pl-0">
+          <li>
+            Drag the <Icon name="tabler:map-pin-filled" class="text-warning" /> to your
+            desired location.
+          </li>
+          <li>Double click on your desired location.</li>
+          <li>Search for a location below.</li>
+        </ul>
+      </div>
 
       <div class="flex justify-end gap-4 mt-4">
         <button
@@ -177,5 +200,9 @@ onBeforeRouteLeave(() => {
         </button>
       </div>
     </form>
+
+    <div class="divider" />
+
+    <AppPlaceSearch @result-selected="searchResultSelected" />
   </div>
 </template>
