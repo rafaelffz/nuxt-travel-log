@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import type { RouteLocationRaw } from "vue-router";
+
 const props = defineProps<{
   label: string;
   icon: string;
-  href: string;
+  href?: string;
+  to?: RouteLocationRaw;
   showLabel?: boolean;
   iconColor?: "text-accent" | "text-primary" | "text-secondary";
 }>();
@@ -13,11 +16,11 @@ const route = useRoute();
 <template>
   <div class="tooltip tooltip-right" :data-tip="showLabel ? undefined : props.label">
     <NuxtLink
-      :to="props.href"
+      :to="props.href || props.to"
       :class="{
         'bg-base-300': route.path === props.href,
       }"
-      class="flex items-center gap-2 p-2 hover:bg-base-300 rounded-lg cursor-pointer font-medium transition-all duration-100 ease-out"
+      class="relative before:content-[''] before:scale-0 before:opacity-0 hover:before:scale-100 hover:before:opacity-100 before:bg-base-300 before:absolute before:rounded-lg before:origin-center before:inset-0 before:z-0 before:transition-all before:duration-200 before:ease-[cubic-bezier(0.18,0.89,0.32,1.05)] flex items-center gap-2 p-2 rounded-lg cursor-pointer font-medium"
     >
       <Icon
         :name="props.icon"
@@ -28,7 +31,7 @@ const route = useRoute();
       <Transition name="grow-x">
         <span
           v-show="showLabel"
-          class="whitespace-nowrap origin-left"
+          class="whitespace-nowrap origin-left z-10"
           :class="[showLabel ? 'w-auto opacity-100' : 'w-0 opacity-0']"
         >{{ props.label }}</span>
       </Transition>
