@@ -7,6 +7,15 @@ import type { InsertLocation } from "../schema";
 import db from "..";
 import { location } from "../schema";
 
+export async function findLocation(slug: string, userId: number) {
+  return await db.query.location.findFirst({
+    where: and(eq(location.slug, slug), eq(location.userId, userId)),
+    with: {
+      locationLogs: true,
+    },
+  });
+}
+
 export async function findLocations(userId: number) {
   return await db.query.location.findMany({
     where: eq(location.userId, userId),
@@ -47,7 +56,11 @@ export function findUniqueAvailableSlug(existingSlugs: { slug: string }[], slug:
   return slug;
 }
 
-export async function insertLocation(insertable: InsertLocation, slug: string, userId: number) {
+export async function insertLocation(
+  insertable: InsertLocation,
+  slug: string,
+  userId: number,
+) {
   const [created] = await db
     .insert(location)
     .values({
