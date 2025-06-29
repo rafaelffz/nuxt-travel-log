@@ -7,6 +7,7 @@ const route = useRoute();
 const sidebarStore = useSidebarStore();
 const mapStore = useMapStore();
 const locationsStore = useLocationsStore();
+const { currentLocation } = storeToRefs(locationsStore);
 const { loading } = storeToRefs(sidebarStore);
 const { showLoading } = useDelayedLoading(loading);
 
@@ -17,10 +18,66 @@ function toggleSidebar() {
   localStorage.setItem("isSidebarOpen", isSidebarOpen.value.toString());
 }
 
+watchEffect(() => {
+  if (route.name === "dashboard-location-slug") {
+    sidebarStore.sidebarTopItems = [
+      {
+        id: "link-dashboard",
+        label: "Back to Locations",
+        href: "/dashboard",
+        icon: "tabler:arrow-back-up",
+      },
+      {
+        id: "link-dashboard",
+        label: currentLocation.value ? currentLocation.value.name : "View Logs",
+        to: {
+          name: "dashboard-location-slug",
+          params: { slug: currentLocation.value?.slug },
+        },
+        icon: "tabler:map-2",
+      },
+      {
+        id: "link-location-edit",
+        label: "Edit Location",
+        to: {
+          name: "dashboard-location-slug-edit",
+          params: { slug: currentLocation.value?.slug },
+        },
+        icon: "tabler:edit",
+      },
+      {
+        id: "link-add-location",
+        label: "Add Location Log",
+        to: {
+          name: "dashboard-location-slug-add",
+          params: { slug: currentLocation.value?.slug },
+        },
+        icon: "tabler:bookmark-plus",
+      },
+    ];
+  }
+  else {
+    sidebarStore.sidebarTopItems = [
+      {
+        id: "link-dashboard",
+        label: "Locations",
+        href: "/dashboard",
+        icon: "tabler:map-2",
+      },
+      {
+        id: "add-dashboard",
+        label: "Add Location",
+        href: "/dashboard/add",
+        icon: "tabler:map-plus",
+      },
+    ];
+  }
+});
+
 onMounted(() => {
   isSidebarOpen.value = localStorage.getItem("isSidebarOpen") === "true";
   if (route.path !== "/dashboard") {
-    locationsStore.refresh();
+    locationsStore.refreshLocations();
   }
 });
 </script>
@@ -45,16 +102,13 @@ onMounted(() => {
 
       <div class="flex flex-col flex-1 gap-1">
         <SidebarButton
+          v-for="item in sidebarStore.sidebarTopItems"
+          :key="item.id"
           :show-label="isSidebarOpen"
-          label="Locations"
-          icon="tabler:map-2"
-          href="/dashboard"
-        />
-        <SidebarButton
-          :show-label="isSidebarOpen"
-          label="Add Location"
-          icon="tabler:map-plus"
-          href="/dashboard/add"
+          :label="item.label"
+          :icon="item.icon"
+          :href="item.href"
+          :to="item.to"
         />
 
         <div
