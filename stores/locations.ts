@@ -1,20 +1,47 @@
+import type { SelectLocationWithLogs } from "~/lib/db/schema";
 import type { MapPoint } from "~/lib/types";
 
+const listLocationsInSidebar = new Set(["dashboard", "dashboard-add"]);
+const listCurrentLocationInSidebar = new Set([
+  "dashboard-location-slug",
+  "dashboard-location-slug-add",
+  "dashboard-location-slug-edit",
+]);
+
 export const useLocationsStore = defineStore("locations", () => {
-  const { data, pending, refresh } = useLazyFetch("/api/locations", {
+  const route = useRoute();
+
+  const {
+    data: locations,
+    pending: locationsPending,
+    refresh: refreshLocations,
+  } = useLazyFetch("/api/locations", {
     key: "locations",
-    cache: "force-cache",
+    // cache: "force-cache",
+  });
+
+  const locationUrlWithSlug = computed(() => `/api/location/${route.params.slug}`);
+  const {
+    data: currentLocation,
+    pending: currentLocationPending,
+    error: currentLocationError,
+    refresh: refreshCurrentLocation,
+  } = useLazyFetch<SelectLocationWithLogs>(locationUrlWithSlug, {
+    key: `location-${route.params.slug}`,
+    // cache: "force-cache",
+    immediate: false,
+    watch: false,
   });
 
   const sidebarStore = useSidebarStore();
   const mapStore = useMapStore();
 
   effect(() => {
-    if (data.value) {
+    if (locations.value && listLocationsInSidebar.has(route.name?.toString() || "")) {
       const mapPoints: MapPoint[] = [];
       const sidebarItems: SidebarItem[] = [];
 
-      data.value.forEach((location) => {
+      locations.value.forEach((location) => {
         const mapPoint = createMapPointFromLocation(location);
         sidebarItems.push({
           id: `location-${location.id}`,
@@ -26,18 +53,27 @@ export const useLocationsStore = defineStore("locations", () => {
         mapPoints.push(mapPoint);
       });
 
-      sidebarStore.loading = false;
       sidebarStore.sidebarItems = sidebarItems;
-
       mapStore.mapPoints = mapPoints;
     }
-
-    sidebarStore.loading = pending.value;
+    else if (
+      currentLocation.value
+      && listCurrentLocationInSidebar.has(route.name?.toString() || "")
+      && route.params.slug === currentLocation.value.slug
+    ) {
+      sidebarStore.sidebarItems = [];
+      mapStore.mapPoints = [currentLocation.value];
+    }
+    sidebarStore.loading = locationsPending.value;
   });
 
   return {
-    locations: data,
-    pending,
-    refresh,
+    locations,
+    locationsPending,
+    refreshLocations,
+    currentLocation,
+    currentLocationPending,
+    currentLocationError,
+    refreshCurrentLocation,
   };
 });

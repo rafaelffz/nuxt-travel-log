@@ -2,11 +2,11 @@
 const locationsStore = useLocationsStore();
 const mapStore = useMapStore();
 const route = useRoute();
-const { locations, pending } = storeToRefs(locationsStore);
+const { locations, locationsPending: pending } = storeToRefs(locationsStore);
 
 onMounted(() => {
   if (route.path === "/dashboard") {
-    locationsStore.refresh();
+    locationsStore.refreshLocations();
     mapStore.adjustMapBounds();
   }
 });

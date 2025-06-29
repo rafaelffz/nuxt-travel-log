@@ -1,21 +1,13 @@
 <script setup lang="ts">
-const route = useRoute();
-const mapStore = useMapStore();
-const { slug } = route.params;
-
+const locationsStore = useLocationsStore();
 const {
-  data: location,
-  pending,
-  error,
-} = useLazyFetch(`/api/location/${slug}`, {
-  key: `location-${slug}`,
-  cache: "force-cache",
-});
+  currentLocation: location,
+  currentLocationPending: pending,
+  currentLocationError: error,
+} = storeToRefs(locationsStore);
 
-watchEffect(() => {
-  if (location.value) {
-    mapStore.mapPoints = [location.value];
-  }
+onMounted(() => {
+  locationsStore.refreshCurrentLocation();
 });
 </script>
 
