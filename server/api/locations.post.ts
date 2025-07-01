@@ -3,7 +3,7 @@ import type { DrizzleError } from "drizzle-orm";
 import slugify from "slug";
 
 import {
-  findByLocationName,
+  findLocationByName,
   findLocationsBySlug,
   findUniqueAvailableSlug,
   insertLocation,
@@ -19,7 +19,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
     return sendZodError(event, result.error);
   }
 
-  const existingLocation = await findByLocationName(result.data, event.context.user.id);
+  const existingLocation = await findLocationByName(result.data, event.context.user.id);
 
   if (existingLocation) {
     return sendError(
