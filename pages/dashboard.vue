@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { CURRENT_LOCATION_PAGES, EDIT_PAGES } from "~/lib/constants";
+
 useHead({
   title: "MyTravlo | Dashboard",
 });
@@ -7,7 +9,7 @@ const route = useRoute();
 const sidebarStore = useSidebarStore();
 const mapStore = useMapStore();
 const locationsStore = useLocationsStore();
-const { currentLocation } = storeToRefs(locationsStore);
+const { currentLocation, currentLocationPending } = storeToRefs(locationsStore);
 const { loading } = storeToRefs(sidebarStore);
 const { showLoading } = useDelayedLoading(loading);
 
@@ -19,7 +21,7 @@ function toggleSidebar() {
 }
 
 watchEffect(() => {
-  if (route.name === "dashboard-location-slug") {
+  if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
     sidebarStore.sidebarTopItems = [
       {
         id: "link-dashboard",
@@ -29,10 +31,13 @@ watchEffect(() => {
       },
       {
         id: "link-dashboard",
-        label: currentLocation.value ? currentLocation.value.name : "View Logs",
+        label:
+          currentLocationPending.value || !currentLocation.value
+            ? "Loading..."
+            : currentLocation.value.name,
         to: {
           name: "dashboard-location-slug",
-          params: { slug: currentLocation.value?.slug },
+          params: { slug: route.params.slug },
         },
         icon: "tabler:map-2",
       },
@@ -41,7 +46,7 @@ watchEffect(() => {
         label: "Edit Location",
         to: {
           name: "dashboard-location-slug-edit",
-          params: { slug: currentLocation.value?.slug },
+          params: { slug: route.params.slug },
         },
         icon: "tabler:edit",
       },
@@ -50,7 +55,7 @@ watchEffect(() => {
         label: "Add Location Log",
         to: {
           name: "dashboard-location-slug-add",
-          params: { slug: currentLocation.value?.slug },
+          params: { slug: route.params.slug },
         },
         icon: "tabler:bookmark-plus",
       },
@@ -157,9 +162,14 @@ onMounted(() => {
     <div class="flex-1 overflow-auto bg-base-200">
       <div
         class="flex size-full max-h-full"
-        :class="{ 'flex-col': route.path !== '/dashboard/add' }"
+        :class="{ 'flex-col': !EDIT_PAGES.has(route.name?.toString() || '') }"
       >
-        <NuxtPage />
+        <NuxtPage
+          :class="{
+            'shrink-0': EDIT_PAGES.has(route.name?.toString() || ''),
+            'w-96': EDIT_PAGES.has(route.name?.toString() || ''),
+          }"
+        />
         <AppMap />
       </div>
     </div>

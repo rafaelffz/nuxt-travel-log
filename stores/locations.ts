@@ -1,12 +1,7 @@
 import type { SelectLocationWithLogs } from "~/lib/db/schema";
 import type { MapPoint } from "~/lib/types";
 
-const listLocationsInSidebar = new Set(["dashboard", "dashboard-add"]);
-const listCurrentLocationInSidebar = new Set([
-  "dashboard-location-slug",
-  "dashboard-location-slug-add",
-  "dashboard-location-slug-edit",
-]);
+import { CURRENT_LOCATION_PAGES, LOCATIONS_PAGES } from "~/lib/constants";
 
 export const useLocationsStore = defineStore("locations", () => {
   const route = useRoute();
@@ -17,7 +12,7 @@ export const useLocationsStore = defineStore("locations", () => {
     refresh: refreshLocations,
   } = useLazyFetch("/api/locations", {
     key: "locations",
-    // cache: "force-cache",
+    cache: "force-cache",
   });
 
   const locationUrlWithSlug = computed(() => `/api/location/${route.params.slug}`);
@@ -28,7 +23,7 @@ export const useLocationsStore = defineStore("locations", () => {
     refresh: refreshCurrentLocation,
   } = useLazyFetch<SelectLocationWithLogs>(locationUrlWithSlug, {
     key: `location-${route.params.slug}`,
-    // cache: "force-cache",
+    cache: "force-cache",
     immediate: false,
     watch: false,
   });
@@ -37,7 +32,7 @@ export const useLocationsStore = defineStore("locations", () => {
   const mapStore = useMapStore();
 
   effect(() => {
-    if (locations.value && listLocationsInSidebar.has(route.name?.toString() || "")) {
+    if (locations.value && LOCATIONS_PAGES.has(route.name?.toString() || "")) {
       const mapPoints: MapPoint[] = [];
       const sidebarItems: SidebarItem[] = [];
 
@@ -58,7 +53,7 @@ export const useLocationsStore = defineStore("locations", () => {
     }
     else if (
       currentLocation.value
-      && listCurrentLocationInSidebar.has(route.name?.toString() || "")
+      && CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")
       && route.params.slug === currentLocation.value.slug
     ) {
       sidebarStore.sidebarItems = [];
