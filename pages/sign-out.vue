@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const authStore = useAuthStore();
 
-onMounted(async () => {
-  await authStore.signOut();
+onMounted(() => {
+  authStore.signOut();
 });
 </script>
 

@@ -12,7 +12,6 @@ export const useLocationsStore = defineStore("locations", () => {
     refresh: refreshLocations,
   } = useLazyFetch("/api/locations", {
     key: "locations",
-    cache: "force-cache",
   });
 
   const locationUrlWithSlug = computed(() => `/api/location/${route.params.slug}`);
@@ -23,7 +22,7 @@ export const useLocationsStore = defineStore("locations", () => {
     refresh: refreshCurrentLocation,
   } = useLazyFetch<SelectLocationWithLogs>(locationUrlWithSlug, {
     key: `location-${route.params.slug}`,
-    cache: "force-cache",
+    // cache: "force-cache",
     immediate: false,
     watch: false,
   });
@@ -50,6 +49,12 @@ export const useLocationsStore = defineStore("locations", () => {
 
       sidebarStore.sidebarItems = sidebarItems;
       mapStore.mapPoints = mapPoints;
+    }
+    else if (
+      currentLocationPending.value
+      && CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")
+    ) {
+      sidebarStore.sidebarItems = [];
     }
     else if (
       currentLocation.value

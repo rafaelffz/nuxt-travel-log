@@ -2,13 +2,16 @@
 import type { InsertLocation } from "~/lib/db/schema";
 
 const route = useRoute();
-const locationStore = useLocationsStore();
+const locationsStore = useLocationsStore();
 const { $csrfFetch } = useNuxtApp();
 
 async function onSubmit(values: InsertLocation) {
-  await $csrfFetch(`/api/locations/${route.params.slug}`, {
+  await $csrfFetch(`/api/location/${route.params.slug}`, {
     method: "put",
     body: values,
+    onResponse: async () => {
+      await locationsStore.refreshLocations();
+    },
   });
 }
 
@@ -24,11 +27,11 @@ function onSubmitComplete() {
 
 <template>
   <LocationForm
-    v-if="!locationStore.currentLocationPending"
+    v-if="!locationsStore.currentLocationPending"
     :on-submit
     :on-submit-complete
-    :initial-values="locationStore.currentLocation"
+    :initial-values="locationsStore.currentLocation"
     submit-label="Update"
-    submit-icon="tabler:map-pin-up"
+    submit-icon="tabler:pencil-check"
   />
 </template>

@@ -5,12 +5,17 @@ useHead({
   title: "MyTravlo | Add Location",
 });
 
+const locationsStore = useLocationsStore();
+
 const { $csrfFetch } = useNuxtApp();
 
 async function onSubmit(values: InsertLocation) {
   await $csrfFetch("/api/locations", {
     method: "post",
     body: values,
+    onResponse: async () => {
+      await locationsStore.refreshLocations();
+    },
   });
 }
 

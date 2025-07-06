@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CURRENT_LOCATION_PAGES, EDIT_PAGES } from "~/lib/constants";
+import { CURRENT_LOCATION_PAGES, EDIT_PAGES, LOCATIONS_PAGES } from "~/lib/constants";
 
 useHead({
   title: "MyTravlo | Dashboard",
@@ -20,7 +20,11 @@ function toggleSidebar() {
   localStorage.setItem("isSidebarOpen", isSidebarOpen.value.toString());
 }
 
-watchEffect(() => {
+if (LOCATIONS_PAGES.has(route.name?.toString() || "")) {
+  await locationsStore.refreshLocations();
+}
+
+watchEffect(async () => {
   if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
     sidebarStore.sidebarTopItems = [
       {
@@ -29,37 +33,39 @@ watchEffect(() => {
         href: "/dashboard",
         icon: "tabler:arrow-back-up",
       },
-      {
-        id: "link-dashboard",
-        label:
-          currentLocationPending.value || !currentLocation.value
-            ? "Loading..."
-            : currentLocation.value.name,
-        to: {
-          name: "dashboard-location-slug",
-          params: { slug: route.params.slug },
-        },
-        icon: "tabler:map-2",
-      },
-      {
-        id: "link-location-edit",
-        label: "Edit Location",
-        to: {
-          name: "dashboard-location-slug-edit",
-          params: { slug: route.params.slug },
-        },
-        icon: "tabler:edit",
-      },
-      {
-        id: "link-add-location",
-        label: "Add Location Log",
-        to: {
-          name: "dashboard-location-slug-add",
-          params: { slug: route.params.slug },
-        },
-        icon: "tabler:bookmark-plus",
-      },
     ];
+
+    if (currentLocation.value && !currentLocationPending.value) {
+      sidebarStore.sidebarTopItems.push(
+        {
+          id: "link-dashboard",
+          label: currentLocation.value.name,
+          to: {
+            name: "dashboard-location-slug",
+            params: { slug: route.params.slug },
+          },
+          icon: "tabler:map-2",
+        },
+        {
+          id: "link-location-edit",
+          label: "Edit Location",
+          to: {
+            name: "dashboard-location-slug-edit",
+            params: { slug: route.params.slug },
+          },
+          icon: "tabler:edit",
+        },
+        {
+          id: "link-add-location",
+          label: "Add Location Log",
+          to: {
+            name: "dashboard-location-slug-add",
+            params: { slug: route.params.slug },
+          },
+          icon: "tabler:bookmark-plus",
+        },
+      );
+    }
   }
   else {
     sidebarStore.sidebarTopItems = [
@@ -81,9 +87,6 @@ watchEffect(() => {
 
 onMounted(() => {
   isSidebarOpen.value = localStorage.getItem("isSidebarOpen") === "true";
-  if (route.path !== "/dashboard") {
-    locationsStore.refreshLocations();
-  }
 });
 </script>
 
@@ -117,6 +120,17 @@ onMounted(() => {
         />
 
         <div
+          v-if="route.path.startsWith('/dashboard/location') && currentLocationPending"
+          class="flex flex-col gap-2"
+        >
+          <div
+            v-for="(_, index) in 3"
+            :key="index"
+            class="skeleton h-9 w-full animate-pulse"
+          />
+        </div>
+
+        <div
           v-show="sidebarStore.sidebarItems.length > 0 || showLoading"
           class="divider m-0"
         />
@@ -143,7 +157,7 @@ onMounted(() => {
           <div
             v-for="(_, index) in 3"
             :key="index"
-            class="skeleton h-8 w-full animate-pulse"
+            class="skeleton h-9 w-full animate-pulse"
           />
         </div>
       </div>

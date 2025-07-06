@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const route = useRoute();
 const locationsStore = useLocationsStore();
 const {
   currentLocation: location,
@@ -8,6 +9,12 @@ const {
 
 onMounted(() => {
   locationsStore.refreshCurrentLocation();
+});
+
+onBeforeRouteUpdate((to) => {
+  if (to.name === "dashboard-location-slug") {
+    locationsStore.refreshCurrentLocation();
+  }
 });
 </script>
 
@@ -20,12 +27,12 @@ onMounted(() => {
       v-else-if="!pending && error"
       class="h-full flex flex-col gap-4 items-center justify-center"
     >
-      <Icon name="tabler:zoom-question" size="62" class="text-error" />
-      <h2 class="text-xl font-medium text-error">
+      <Icon name="tabler:zoom-question" size="62" class="text-red-500" />
+      <h2 class="text-xl font-medium text-red-500">
         We couldn't find this location.
       </h2>
-      <h2 class="text-lg font-medium text-gray-200">
-        Plase, try again with another location.
+      <h2 class="text-lg font-medium text-base-content">
+        Please, try again with another location.
       </h2>
     </div>
     <div v-else-if="!pending && location">
@@ -45,6 +52,9 @@ onMounted(() => {
           <span class="text-sm">Add location log</span>
         </button>
       </div>
+    </div>
+    <div v-if="route.name !== 'dashboard-location-slug'">
+      <NuxtPage />
     </div>
   </div>
 </template>

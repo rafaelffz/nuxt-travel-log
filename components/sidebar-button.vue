@@ -20,7 +20,7 @@ const route = useRoute();
       :class="{
         'bg-base-300': route.path === props.href,
       }"
-      class="relative before:content-[''] before:scale-0 before:opacity-0 hover:before:scale-100 hover:before:opacity-100 before:bg-base-300 before:absolute before:rounded-lg before:origin-center before:inset-0 before:z-0 before:transition-all before:duration-200 before:ease-[cubic-bezier(0.18,0.89,0.32,1.05)] flex items-center gap-2 p-2 rounded-lg cursor-pointer font-medium"
+      class="relative overflow-hidden before:content-[''] before:scale-0 before:opacity-0 hover:before:scale-100 hover:before:opacity-100 before:bg-base-300 before:absolute before:rounded-lg before:origin-center before:inset-0 before:z-0 before:transition-all before:duration-200 before:ease-[cubic-bezier(0.18,0.89,0.32,1.05)] flex items-center gap-2 p-2 rounded-lg cursor-pointer font-medium"
     >
       <Icon
         :name="props.icon"

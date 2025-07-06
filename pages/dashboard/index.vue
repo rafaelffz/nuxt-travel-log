@@ -6,7 +6,6 @@ const { locations, locationsPending: pending } = storeToRefs(locationsStore);
 
 onMounted(() => {
   if (route.path === "/dashboard") {
-    locationsStore.refreshLocations();
     mapStore.adjustMapBounds();
   }
 });

@@ -41,7 +41,6 @@ const onSubmit = handleSubmit(async (values) => {
     loading.value = true;
 
     await props.onSubmit(values);
-    await refreshNuxtData("locations");
 
     submitted.value = true;
     props.onSubmitComplete();
@@ -179,9 +178,9 @@ onBeforeRouteLeave(() => {
       </button>
 
       <button :disabled="loading" type="submit" class="btn btn-primary">
-        Add
+        {{ props.submitLabel }}
         <span v-if="loading" class="loading loading-spinner loading-sm" />
-        <Icon v-else name="tabler:map-pin-plus" size="22" />
+        <Icon v-else :name="props.submitIcon" size="22" />
       </button>
     </div>
   </form>
