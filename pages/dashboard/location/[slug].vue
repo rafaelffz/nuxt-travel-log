@@ -72,7 +72,7 @@ onBeforeRouteUpdate((to) => {
         Please, try again with another location.
       </h2>
     </div>
-    <div v-else-if="!loading && location">
+    <div v-else-if="route.name === 'dashboard-location-slug' && !loading && location">
       <h2 class="text-3xl">
         {{ location?.name }}
 
@@ -116,10 +116,16 @@ onBeforeRouteUpdate((to) => {
         <p class="text-sm italic">
           You haven't added any location logs yet. Add one now to get started.
         </p>
-        <button class="btn btn-primary btn-sm flex items-center gap-2 mt-2">
+        <NuxtLink
+          class="btn btn-primary btn-sm mt-2"
+          :to="{
+            name: 'dashboard-location-slug-add',
+            params: { slug: route.params.slug },
+          }"
+        >
           <Icon name="tabler:bookmark-plus" size="18" />
           <span class="text-sm">Add location log</span>
-        </button>
+        </NuxtLink>
       </div>
     </div>
     <div v-if="route.name !== 'dashboard-location-slug'">

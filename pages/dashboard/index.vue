@@ -9,6 +9,10 @@ onMounted(() => {
     mapStore.adjustMapBounds();
   }
 });
+
+onBeforeRouteLeave(() => {
+  mapStore.selectedPoint = null;
+});
 </script>
 
 <template>

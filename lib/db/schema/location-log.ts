@@ -1,5 +1,9 @@
 import { relations } from "drizzle-orm";
 import { int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+import { DescriptionSchema, LatSchema, LongSchema, NameSchema } from "~/lib/zod-schemas";
 
 import { user } from "./auth";
 import { location } from "./location";
@@ -34,4 +38,33 @@ export const locationLogRelations = relations(locationLog, ({ one }) => ({
   }),
 }));
 
+export const InsertLocationLog = createInsertSchema(locationLog, {
+  name: NameSchema,
+  description: DescriptionSchema,
+  lat: LatSchema,
+  long: LongSchema,
+})
+  .omit({
+    id: true,
+    userId: true,
+    locationId: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .superRefine((values, ctx) => {
+    if (values.startedAt > values.endedAt || values.endedAt < values.startedAt) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Start date must be before end date",
+        path: ["startedAt"],
+      });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "End date must be after start date",
+        path: ["endedAt"],
+      });
+    }
+  });
+
+export type InsertLocationLog = z.infer<typeof InsertLocationLog>;
 export type SelectLocationLog = typeof locationLog.$inferSelect;

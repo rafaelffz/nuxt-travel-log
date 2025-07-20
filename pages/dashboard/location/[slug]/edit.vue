@@ -27,11 +27,12 @@ function onSubmitComplete() {
 
 <template>
   <LocationForm
-    v-if="!locationsStore.currentLocationPending"
+    v-if="!locationsStore.currentLocationPending && locationsStore.currentLocation"
     :on-submit
     :on-submit-complete
     :initial-values="locationsStore.currentLocation"
     submit-label="Update"
     submit-icon="tabler:pencil-check"
+    :zoom="9"
   />
 </template>
