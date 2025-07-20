@@ -5,7 +5,9 @@ import type { MapPoint } from "~/lib/types";
 export const useMapStore = defineStore("map", () => {
   const mapPoints = ref<MapPoint[]>([]);
   const selectedPoint = ref<MapPoint | null>(null);
-  const addedPoint = ref<(MapPoint & { centerMap?: boolean }) | null>(null);
+  const addedPoint = ref<(MapPoint & { centerMap?: boolean; zoom?: number }) | null>(
+    null,
+  );
 
   let bounds: LngLatBounds | null = null;
   const padding = 60;
@@ -26,7 +28,7 @@ export const useMapStore = defineStore("map", () => {
           {
             center: [newValue.long, newValue.lat],
             speed: 0.8,
-            zoom: 4,
+            zoom: newValue.zoom || 8,
           },
           {
             immediate: true,
@@ -58,7 +60,7 @@ export const useMapStore = defineStore("map", () => {
 
     map.map?.fitBounds(bounds, {
       padding,
-      maxZoom: 10,
+      maxZoom: addedPoint.value?.zoom || 8,
     });
   }
 

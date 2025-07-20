@@ -42,6 +42,7 @@ function onSubmitComplete() {
       :on-submit-complete
       submit-label="Add"
       submit-icon="tabler:map-pin-plus"
+      :zoom="8"
     />
   </div>
 </template>
