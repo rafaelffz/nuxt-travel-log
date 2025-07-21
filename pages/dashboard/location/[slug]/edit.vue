@@ -13,6 +13,8 @@ async function onSubmit(values: InsertLocation) {
       await locationsStore.refreshLocations();
     },
   });
+
+  refreshNuxtData(`location-${route.params.slug}`);
 }
 
 function onSubmitComplete() {

@@ -16,7 +16,7 @@ onBeforeRouteLeave(() => {
 </script>
 
 <template>
-  <div class="p-6 min-h-64">
+  <div class="page-content-top">
     <h2 class="text-2xl">
       Locations
     </h2>
@@ -25,35 +25,16 @@ onBeforeRouteLeave(() => {
       <div
         v-for="(_, index) in 3"
         :key="index"
-        class="skeleton h-32 w-72 animate-pulse delayed-animation"
+        class="skeleton h-32 w-72 animate-pulse"
       />
     </div>
 
-    <div
-      v-else-if="!pending && locations && locations.length > 0"
-      class="flex flex-nowrap mt-4 gap-2 overflow-auto"
-    >
-      <NuxtLink
+    <div v-else-if="!pending && locations && locations.length > 0" class="location-list">
+      <LocationCard
         v-for="location in locations"
         :key="location.id"
-        class="card bg-base-300 border-2 w-72 min-h-28 shrink-0 cursor-pointer mb-2"
-        :to="{ name: 'dashboard-location-slug', params: { slug: location.slug } }"
-        :class="{
-          'border-accent': isPointSelected(location, mapStore.selectedPoint),
-          'border-transparent': !isPointSelected(location, mapStore.selectedPoint),
-        }"
-        @mouseenter="mapStore.selectedPoint = createMapPointFromLocation(location)"
-        @mouseleave="mapStore.selectedPoint = null"
-      >
-        <div class="card-body">
-          <h2 class="text-xl font-medium">
-            {{ location.name }}
-          </h2>
-          <p class="line-clamp-2">
-            {{ location.description }}
-          </p>
-        </div>
-      </NuxtLink>
+        :map-point="createMapPointFromLocation(location)"
+      />
     </div>
 
     <div v-else class="flex flex-col gap-2 mt-4">

@@ -3,6 +3,7 @@ import type { FetchError } from "ofetch";
 
 const route = useRoute();
 const locationsStore = useLocationsStore();
+
 const {
   currentLocation: location,
   currentLocationPending: pending,
@@ -56,10 +57,21 @@ onBeforeRouteUpdate((to) => {
 </script>
 
 <template>
-  <div class="p-6 min-h-64">
-    <div v-if="loading">
-      <div class="skeleton h-6 w-24 animate-pulse" />
+  <div class="page-content-top">
+    <div v-if="loading" class="flex flex-col gap-4">
+      <div class="flex items-center gap-3">
+        <div class="skeleton h-10 w-48 animate-pulse" />
+        <div class="skeleton h-8 w-3 animate-pulse" />
+      </div>
+      <div class="flex gap-2 h-full">
+        <div
+          v-for="(_, index) in 3"
+          :key="index"
+          class="skeleton h-32 w-72 animate-pulse"
+        />
+      </div>
     </div>
+
     <div
       v-else-if="!loading && error"
       class="h-full flex flex-col gap-4 items-center justify-center"
@@ -72,6 +84,7 @@ onBeforeRouteUpdate((to) => {
         Please, try again with another location.
       </h2>
     </div>
+
     <div v-else-if="route.name === 'dashboard-location-slug' && !loading && location">
       <h2 class="text-3xl">
         {{ location?.name }}
@@ -127,10 +140,34 @@ onBeforeRouteUpdate((to) => {
           <span class="text-sm">Add location log</span>
         </NuxtLink>
       </div>
+
+      <div
+        v-else-if="
+          route.name === 'dashboard-location-slug' && location.locationLogs.length
+        "
+        class="location-list"
+      >
+        <LocationCard
+          v-for="log in location.locationLogs"
+          :key="log.id"
+          :map-point="createMapPointFromLocationLog(log)"
+        >
+          <template #top>
+            <p v-if="log.startedAt !== log.endedAt" class="text-sm text-gray-500">
+              {{ formatDateBR(log.startedAt) }} - {{ formatDateBR(log.endedAt) }}
+            </p>
+            <p v-else class="text-sm text-gray-500">
+              {{ formatDateBR(log.startedAt) }}
+            </p>
+          </template>
+        </LocationCard>
+      </div>
     </div>
+
     <div v-if="route.name !== 'dashboard-location-slug'">
       <NuxtPage />
     </div>
+
     <AppDialog
       title="Are you sure?"
       description="Deleting this location will also delete all of the associated logs. This cannot be undone. Do you really want to do this?"
