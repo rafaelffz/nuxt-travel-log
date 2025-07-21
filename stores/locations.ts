@@ -15,6 +15,7 @@ export const useLocationsStore = defineStore("locations", () => {
   });
 
   const locationUrlWithSlug = computed(() => `/api/location/${route.params.slug}`);
+
   const {
     data: currentLocation,
     pending: currentLocationPending,
@@ -22,7 +23,7 @@ export const useLocationsStore = defineStore("locations", () => {
     refresh: refreshCurrentLocation,
   } = useLazyFetch<SelectLocationWithLogs>(locationUrlWithSlug, {
     key: `location-${route.params.slug}`,
-    // cache: "force-cache",
+    cache: "force-cache",
     immediate: false,
     watch: false,
   });
