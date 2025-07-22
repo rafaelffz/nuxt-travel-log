@@ -9,6 +9,7 @@ export const useLocationsStore = defineStore("locations", () => {
   const {
     data: locations,
     pending: locationsPending,
+    status: locationStatus,
     refresh: refreshLocations,
   } = useLazyFetch("/api/locations", {
     key: "locations",
@@ -19,11 +20,11 @@ export const useLocationsStore = defineStore("locations", () => {
   const {
     data: currentLocation,
     pending: currentLocationPending,
+    status: currentLocationStatus,
     error: currentLocationError,
     refresh: refreshCurrentLocation,
   } = useLazyFetch<SelectLocationWithLogs>(locationUrlWithSlug, {
-    key: `location-${route.params.slug}`,
-    cache: "force-cache",
+    key: "location",
     immediate: false,
     watch: false,
   });
@@ -60,12 +61,38 @@ export const useLocationsStore = defineStore("locations", () => {
     else if (
       currentLocation.value
       && CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")
-      && route.params.slug === currentLocation.value.slug
     ) {
-      sidebarStore.sidebarItems = [];
-      mapStore.mapPoints = [currentLocation.value];
+      const mapPoints: MapPoint[] = [];
+      const sidebarItems: SidebarItem[] = [];
+
+      currentLocation.value.locationLogs.forEach((log) => {
+        const mapPoint = createMapPointFromLocationLog(log);
+        sidebarStore.sidebarItems.push({
+          id: `location-log-${log.id}`,
+          label: log.name,
+          icon: "tabler:bookmark-filled",
+          to: { name: "dashboard-location-slug-id", params: { id: log.id } },
+          mapPoint,
+        });
+
+        mapPoints.push(mapPoint);
+      });
+
+      sidebarStore.sidebarItems = sidebarItems;
+      if (mapPoints.length) {
+        mapStore.mapPoints = mapPoints;
+      }
+      else {
+        mapStore.mapPoints = [currentLocation.value];
+      }
     }
-    sidebarStore.loading = locationsPending.value;
+
+    sidebarStore.loading
+      = locationStatus.value === "pending" || currentLocationStatus.value === "pending";
+
+    if (sidebarStore.loading) {
+      mapStore.mapPoints = [];
+    }
   });
 
   return {

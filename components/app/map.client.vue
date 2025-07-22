@@ -4,7 +4,6 @@ import type { LngLat, LngLatLike } from "maplibre-gl";
 
 import { CENTER_MAP_COORDINATES } from "~/lib/constants";
 
-const route = useRoute();
 const colorMode = useColorMode();
 const mapStore = useMapStore();
 const style = computed(() =>
@@ -46,9 +45,7 @@ onMounted(() => {
       <MglFullscreenControl />
       <MglNavigationControl />
       <MglMarker
-        v-if="
-          mapStore.addedPoint && route.name?.toString() !== 'dashboard-location-slug-add'
-        "
+        v-if="mapStore.addedPoint"
         draggable
         class-name="z-50"
         :coordinates="[mapStore.addedPoint.long, mapStore.addedPoint.lat]"
