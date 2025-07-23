@@ -33,7 +33,6 @@ async function confirmDelete() {
       method: "DELETE",
     });
 
-    refreshNuxtData("locations");
     navigateTo("/dashboard");
   }
   catch (e) {

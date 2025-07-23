@@ -30,7 +30,7 @@ export const useMapStore = defineStore("map", () => {
           {
             center: [newValue.long, newValue.lat],
             speed: 0.8,
-            zoom: newValue.zoom || 8,
+            zoom: newValue.zoom || 12,
           },
           {
             immediate: true,
@@ -67,7 +67,7 @@ export const useMapStore = defineStore("map", () => {
 
     map.map?.fitBounds(bounds, {
       padding,
-      maxZoom: addedPoint.value?.zoom || 8,
+      maxZoom: addedPoint.value?.zoom || 12,
     });
   }
 

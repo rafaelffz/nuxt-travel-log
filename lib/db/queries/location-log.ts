@@ -1,3 +1,5 @@
+import { and, eq } from "drizzle-orm";
+
 import type { InsertLocationLog } from "../schema";
 
 import db from "..";
@@ -16,4 +18,10 @@ export async function insertLocationLog(
       userId,
     })
     .returning();
+}
+
+export async function findLocationLog(id: number, userId: number) {
+  return await db.query.locationLog.findFirst({
+    where: and(eq(locationLog.id, id), eq(locationLog.userId, userId)),
+  });
 }

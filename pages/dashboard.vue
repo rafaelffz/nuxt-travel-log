@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { CURRENT_LOCATION_PAGES, EDIT_PAGES, LOCATIONS_PAGES } from "~/lib/constants";
+import {
+  CURRENT_LOCATION_LOG_PAGES,
+  CURRENT_LOCATION_PAGES,
+  EDIT_PAGES,
+  LOCATIONS_PAGES,
+} from "~/lib/constants";
 
 useHead({
   title: "MyTravlo | Dashboard",
@@ -9,7 +14,8 @@ const route = useRoute();
 const sidebarStore = useSidebarStore();
 const mapStore = useMapStore();
 const locationsStore = useLocationsStore();
-const { currentLocation, currentLocationPending } = storeToRefs(locationsStore);
+const { currentLocation, currentLocationPending, currentLocationStatus }
+  = storeToRefs(locationsStore);
 const { loading } = storeToRefs(sidebarStore);
 const { showLoading } = useDelayedLoading(loading);
 
@@ -24,8 +30,35 @@ if (LOCATIONS_PAGES.has(route.name?.toString() || "")) {
   await locationsStore.refreshLocations();
 }
 
-watchEffect(async () => {
-  if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
+if (
+  CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")
+  || CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")
+) {
+  await locationsStore.refreshCurrentLocation();
+}
+
+if (CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")) {
+  await locationsStore.refreshCurrentLocationLog();
+}
+
+watchEffect(() => {
+  if (LOCATIONS_PAGES.has(route.name?.toString() || "")) {
+    sidebarStore.sidebarTopItems = [
+      {
+        id: "link-dashboard",
+        label: "Locations",
+        href: "/dashboard",
+        icon: "tabler:map-2",
+      },
+      {
+        id: "link-location-add",
+        label: "Add Location",
+        href: "/dashboard/add",
+        icon: "tabler:map-plus",
+      },
+    ];
+  }
+  else if (CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
     sidebarStore.sidebarTopItems = [
       {
         id: "link-dashboard",
@@ -35,14 +68,16 @@ watchEffect(async () => {
       },
     ];
 
-    if (currentLocation.value && !currentLocationPending.value) {
+    if (currentLocation.value && currentLocationStatus.value !== "pending") {
       sidebarStore.sidebarTopItems.push(
         {
           id: "link-dashboard",
           label: currentLocation.value.name,
           to: {
             name: "dashboard-location-slug",
-            params: { slug: route.params.slug },
+            params: {
+              slug: route.params.slug,
+            },
           },
           icon: "tabler:map-2",
         },
@@ -51,37 +86,42 @@ watchEffect(async () => {
           label: "Edit Location",
           to: {
             name: "dashboard-location-slug-edit",
-            params: { slug: route.params.slug },
+            params: {
+              slug: route.params.slug,
+            },
           },
           icon: "tabler:edit",
         },
         {
-          id: "link-add-location",
+          id: "link-location-add",
           label: "Add Location Log",
           to: {
             name: "dashboard-location-slug-add",
-            params: { slug: route.params.slug },
+            params: {
+              slug: route.params.slug,
+            },
           },
           icon: "tabler:bookmark-plus",
         },
       );
     }
   }
-  else {
-    sidebarStore.sidebarTopItems = [
-      {
-        id: "link-dashboard",
-        label: "Locations",
-        href: "/dashboard",
-        icon: "tabler:map-2",
-      },
-      {
-        id: "add-dashboard",
-        label: "Add Location",
-        href: "/dashboard/add",
-        icon: "tabler:map-plus",
-      },
-    ];
+  else if (CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")) {
+    if (currentLocation.value && currentLocationStatus.value !== "pending") {
+      sidebarStore.sidebarTopItems = [
+        {
+          id: "link-location",
+          label: `Back to ${currentLocation.value.name}`,
+          to: {
+            name: "dashboard-location-slug",
+            params: {
+              slug: route.params.slug,
+            },
+          },
+          icon: "tabler:arrow-back-up",
+        },
+      ];
+    }
   }
 });
 
