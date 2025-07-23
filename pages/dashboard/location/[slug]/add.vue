@@ -4,7 +4,7 @@ import type { InsertLocationLog } from "~/lib/db/schema";
 import { CENTER_MAP_COORDINATES } from "~/lib/constants";
 
 const route = useRoute();
-const { currentLocation } = useLocationsStore();
+const { currentLocation, refreshCurrentLocation } = useLocationsStore();
 
 const { $csrfFetch } = useNuxtApp();
 
@@ -12,6 +12,9 @@ async function onSubmit(values: InsertLocationLog) {
   await $csrfFetch(`/api/location/${route.params.slug}/add`, {
     method: "post",
     body: values,
+    onResponse: async () => {
+      await refreshCurrentLocation();
+    },
   });
 }
 
@@ -35,8 +38,8 @@ function onSubmitComplete() {
         description: '',
         startedAt: Date.now() - 24 * 60 * 60 * 1000,
         endedAt: Date.now(),
-        lat: currentLocation?.long || (CENTER_MAP_COORDINATES as [number, number])[1],
-        long: currentLocation?.lat || (CENTER_MAP_COORDINATES as [number, number])[0],
+        lat: currentLocation?.lat || (CENTER_MAP_COORDINATES as [number, number])[1],
+        long: currentLocation?.long || (CENTER_MAP_COORDINATES as [number, number])[0],
       }"
       :zoom="12"
     />
