@@ -4,6 +4,12 @@ export const CENTER_MAP_COORDINATES = [-49.1805017, -14.2400732] as LngLatLike;
 
 export const LOCATIONS_PAGES = new Set(["dashboard", "dashboard-add"]);
 
+export const CURRENT_LOCATION_LOG_PAGES = new Set([
+  "dashboard-location-slug-id",
+  "dashboard-location-slug-id-add",
+  "dashboard-location-slug-id-edit",
+]);
+
 export const CURRENT_LOCATION_PAGES = new Set([
   "dashboard-location-slug",
   "dashboard-location-slug-add",

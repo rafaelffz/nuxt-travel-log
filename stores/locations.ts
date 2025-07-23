@@ -1,7 +1,11 @@
-import type { SelectLocationWithLogs } from "~/lib/db/schema";
+import type { SelectLocationLog, SelectLocationWithLogs } from "~/lib/db/schema";
 import type { MapPoint } from "~/lib/types";
 
-import { CURRENT_LOCATION_PAGES, LOCATIONS_PAGES } from "~/lib/constants";
+import {
+  CURRENT_LOCATION_LOG_PAGES,
+  CURRENT_LOCATION_PAGES,
+  LOCATIONS_PAGES,
+} from "~/lib/constants";
 
 export const useLocationsStore = defineStore("locations", () => {
   const route = useRoute();
@@ -16,6 +20,9 @@ export const useLocationsStore = defineStore("locations", () => {
   });
 
   const locationUrlWithSlug = computed(() => `/api/location/${route.params.slug}`);
+  const locationLogUrlWithSlugAndId = computed(
+    () => `/api/location/${route.params.slug}/${route.params.id}`,
+  );
 
   const {
     data: currentLocation,
@@ -24,7 +31,16 @@ export const useLocationsStore = defineStore("locations", () => {
     error: currentLocationError,
     refresh: refreshCurrentLocation,
   } = useLazyFetch<SelectLocationWithLogs>(locationUrlWithSlug, {
-    key: "location",
+    immediate: false,
+    watch: false,
+  });
+
+  const {
+    data: currentLocationLog,
+    status: currentLocationLogStatus,
+    error: currentLocationLogError,
+    refresh: refreshCurrentLocationLog,
+  } = useLazyFetch<SelectLocationLog>(locationLogUrlWithSlugAndId, {
     immediate: false,
     watch: false,
   });
@@ -67,7 +83,7 @@ export const useLocationsStore = defineStore("locations", () => {
 
       currentLocation.value.locationLogs.forEach((log) => {
         const mapPoint = createMapPointFromLocationLog(log);
-        sidebarStore.sidebarItems.push({
+        sidebarItems.push({
           id: `location-log-${log.id}`,
           label: log.name,
           icon: "tabler:bookmark-filled",
@@ -79,12 +95,20 @@ export const useLocationsStore = defineStore("locations", () => {
       });
 
       sidebarStore.sidebarItems = sidebarItems;
+
       if (mapPoints.length) {
         mapStore.mapPoints = mapPoints;
       }
       else {
         mapStore.mapPoints = [currentLocation.value];
       }
+    }
+    else if (
+      currentLocationLog.value
+      && CURRENT_LOCATION_LOG_PAGES.has(route.name?.toString() || "")
+    ) {
+      sidebarStore.sidebarItems = [];
+      mapStore.mapPoints = [currentLocationLog.value];
     }
 
     sidebarStore.loading
@@ -101,7 +125,12 @@ export const useLocationsStore = defineStore("locations", () => {
     refreshLocations,
     currentLocation,
     currentLocationPending,
+    currentLocationStatus,
     currentLocationError,
     refreshCurrentLocation,
+    currentLocationLog,
+    currentLocationLogStatus,
+    currentLocationLogError,
+    refreshCurrentLocationLog,
   };
 });
