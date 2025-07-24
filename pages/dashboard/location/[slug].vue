@@ -33,6 +33,7 @@ async function confirmDelete() {
       method: "DELETE",
     });
 
+    locationsStore.refreshLocations();
     navigateTo("/dashboard");
   }
   catch (e) {
