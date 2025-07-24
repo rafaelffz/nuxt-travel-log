@@ -10,18 +10,18 @@ const {
 
 const loading = computed(() => status.value === "pending");
 
-onMounted(() => {
-  locationsStore.refreshCurrentLocationLog();
+onBeforeRouteUpdate((to) => {
+  if (to.name === "dashboard-location-slug-id") {
+    locationsStore.refreshCurrentLocationLog();
+  }
 });
 </script>
 
 <template>
   <div>
     <div v-if="loading" class="flex flex-col gap-4">
-      <div class="flex items-center gap-3">
-        <div class="skeleton h-10 w-48 animate-pulse" />
-        <div class="skeleton h-8 w-3 animate-pulse" />
-      </div>
+      <div class="skeleton h-5 w-36 animate-pulse" />
+      <div class="skeleton h-10 w-48 animate-pulse" />
       <div class="flex gap-2 h-full">
         <div
           v-for="(_, index) in 3"
@@ -64,6 +64,9 @@ onMounted(() => {
       <p class="text-md mt-1">
         {{ locationLog?.description }}
       </p>
+    </div>
+    <div v-else>
+      <NuxtPage />
     </div>
   </div>
 </template>
