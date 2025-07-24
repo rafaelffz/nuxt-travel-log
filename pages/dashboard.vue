@@ -120,6 +120,30 @@ watchEffect(() => {
           },
           icon: "tabler:arrow-back-up",
         },
+        {
+          id: "link-view-location-log",
+          label: "View Log",
+          to: {
+            name: "dashboard-location-slug-id",
+            params: {
+              slug: route.params.slug,
+              id: route.params.id,
+            },
+          },
+          icon: "tabler:bookmark-filled",
+        },
+        {
+          id: "link-edit-location-log",
+          label: "Edit Log",
+          to: {
+            name: "dashboard-location-slug-id-edit",
+            params: {
+              slug: route.params.slug,
+              id: route.params.id,
+            },
+          },
+          icon: "tabler:bookmark-edit",
+        },
       ];
     }
   }
