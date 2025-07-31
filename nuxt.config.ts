@@ -50,6 +50,7 @@ export default defineNuxtConfig({
 
     public: {
       s3Endpoint: process.env.S3_ENDPOINT || "",
+      s3PubEndpoint: process.env.S3_PUB_ENDPOINT || "",
       s3Bucket: process.env.S3_BUCKET || "",
     },
   },
