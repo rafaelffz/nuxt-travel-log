@@ -13,13 +13,10 @@ export default function defineAuthenticatedEventHandler<T>(
 ) {
   return defineEventHandler(async (event) => {
     if (!event.context.user) {
-      return sendError(
-        event,
-        createError({
-          statusCode: 401,
-          statusMessage: "Unauthenticated",
-        }),
-      );
+      throw createError({
+        statusCode: 401,
+        statusMessage: "Unauthenticated",
+      });
     }
 
     return handler(event as AuthenticatedEvent);

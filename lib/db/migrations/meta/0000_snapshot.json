@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "15365fc3-7df6-4a37-8317-3e70148d171a",
+  "id": "4f50f9f9-3090-46b3-b10d-bfce58cd6ed7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -400,7 +400,7 @@
           "tableTo": "user",
           "columnsFrom": ["user_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -497,7 +497,7 @@
           "tableTo": "location",
           "columnsFrom": ["location_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "location_log_user_id_user_id_fk": {
@@ -506,7 +506,7 @@
           "tableTo": "user",
           "columnsFrom": ["user_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -568,7 +568,7 @@
           "tableTo": "location_log",
           "columnsFrom": ["location_log_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "location_log_image_user_id_user_id_fk": {
@@ -577,7 +577,7 @@
           "tableTo": "user",
           "columnsFrom": ["user_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

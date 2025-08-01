@@ -3,10 +3,9 @@ import { int, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-import { DescriptionSchema, LatSchema, LongSchema, NameSchema } from "~/lib/zod-schemas";
-
 import type { SelectLocationLogImage } from "./location-log-image";
 
+import { DescriptionSchema, LatSchema, LongSchema, NameSchema } from "../../zod-schemas";
 import { user } from "./auth";
 import { location } from "./location";
 import { locationLogImage } from "./location-log-image";
@@ -21,10 +20,10 @@ export const locationLog = sqliteTable("location_log", {
   long: real().notNull(),
   locationId: int()
     .notNull()
-    .references(() => location.id),
+    .references(() => location.id, { onDelete: "cascade" }),
   userId: int()
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: "cascade" }),
   createdAt: int()
     .notNull()
     .$default(() => Date.now()),
